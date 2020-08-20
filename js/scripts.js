@@ -31,8 +31,13 @@ registerListeners();
 
 function registerListeners() {
     selCurrency1.addEventListener("change", function (e) {
-        fillCurrencyComboboxes();
-        getAndFillCurrency();
+        if (selCurrency1.value == selCurrency2.value) {
+            setCurrency1Value(selCurrency2.dataset.oldValue);
+            btnSwitch.click();
+        } else {
+            fillCurrencyComboboxes();
+            getAndFillCurrency();
+        }
     });
 
     selCurrency2.addEventListener("change", function () {
@@ -41,15 +46,16 @@ function registerListeners() {
     });
 
     btnSwitch.addEventListener("click", function () {
-        let c2 = selCurrency2.value;
+        //iCurrencyValue1.value = iCurrencyValue2.value; // uncomment if values should switch too
 
+        let c2 = selCurrency2.value;
         var opt = document.createElement('option');
         opt.value = selCurrency1.value;
         opt.textContent = selCurrency1.value;
         selCurrency2.appendChild(opt);
 
         selCurrency2.value = selCurrency1.value;
-        selCurrency1.value = c2;
+        setCurrency1Value(c2);
         fillCurrencyComboboxes();
         getAndFillCurrency();
     });
@@ -82,7 +88,7 @@ function fillCurrencyComboboxes() {
         opt.textContent = curr;
         selCurrency1.appendChild(opt);
         if (selected1 == curr) {
-            selCurrency1.value = curr;
+            setCurrency1Value(curr);
         }
 
         if (!selected1) {
@@ -101,4 +107,9 @@ function fillCurrencyComboboxes() {
 
 function showSelectedRate() {
     rateInfo.textContent = `1 ${selCurrency1.value} = ${Math.round(rates[selCurrency2.value] * 10000) /10000 } ${selCurrency2.value}`;
+}
+
+function setCurrency1Value(val) {
+    selCurrency1.dataset.oldValue = selCurrency1.value;
+    selCurrency1.value = val;
 }
